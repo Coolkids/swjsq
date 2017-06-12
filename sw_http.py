@@ -10,6 +10,7 @@ from sw_compat import text_type
 from sw_compat import iteritems, range
 from sw_compat import parse, request
 from sw_compat import URLError
+from urllib import unquote
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +26,10 @@ def get(url, params=None, body=None, headers=None, max_tries=3):
     :raises URLError: request failed even after retries
     '''
     if params:
-        ##query_string = parse.urlencode(params)
+        query_string = parse.urlencode(params)
         delimiter = '&' if '?' in url else '?'
-        url = '{0}{1}{2}'.format(url, delimiter, params)
+        query_string = unquote(query_string)
+        url = '{0}{1}{2}'.format(url, delimiter, query_string)
 
     req = request.Request(url)
     for k, v in iteritems(headers or {}):
